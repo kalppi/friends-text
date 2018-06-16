@@ -1,0 +1,24 @@
+{
+  "name": "ftext",
+  "version": "0.0.1",
+  "description": "",
+  "main": "server/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "node server/server.js",
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  },
+  "author": "Jarno Luukkonen",
+  "license": "ISC",
+  "dependencies": {
+    "canvas": "^1.6.9",
+    "express": "^4.15.2",
+    "js-easy-text-search": "github:kalppi/js-easy-text-search",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-scripts": "^1.1.0",
+    "websocket": "^1.0.24"
+  },
+  "proxy": "http://localhost:8080"
+}

@@ -1,0 +1,7 @@
+
+#search {
+	width: 100%;
+	z-index: 2;
+	border: 1px solid #ccc;
+	padding: 10px;
+}
