@@ -116,6 +116,7 @@ const clientEvents = {
 
 	random: (client) => {
 		const random = ftext.random();
+		
 		clientEvents.load(client, {
 			sid: random.sid,
 			season: random.season,

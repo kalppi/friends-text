@@ -7,10 +7,28 @@ if(process.env.NODE_ENV === 'development') {
 
 class WebSocketManager {
 	constructor() {
+		this.connect();
+	}
+
+	emit(event, data) {
+		if(this.handlers[event]) {
+			for(let f of this.handlers[event]) {
+				f(data);
+			}
+		}
+	}
+
+	connect() {
 		this.socket = new WebSocket('ws://' + window.location.hostname + ':' + port, 'ftext');
 
 		this.socket.onerror = function() {
 			console.log('Connection Error');
+		};
+
+		this.socket.onclose = () => {
+			setTimeout(() => {
+				this.emit('onClose');
+			}, 500);
 		};
 
 		this.socket.onopen = e => {
@@ -21,7 +39,7 @@ class WebSocketManager {
 			}
 		};
 
-		this.socket.onmessage = function(e) {
+		this.socket.onmessage = e => {
 		    if (typeof e.data === 'string') {
 		        const msg = JSON.parse(e.data);
 		        const func =
@@ -29,13 +47,9 @@ class WebSocketManager {
 						return contents.toUpperCase();
 					});
 
-				if(this.handlers[func]) {
-					for(let f of this.handlers[func]) {
-						f(msg.data);
-					}
-				}
+				this.emit(func, msg.data);
 		    }
-		}.bind(this);
+		};
 
 		this.socketSendQueue = [];
 		this.handlers = {};

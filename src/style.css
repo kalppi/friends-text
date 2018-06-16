@@ -50,3 +50,7 @@ body {
 	border: 1px solid black;
 	display: inline-block;
 }
+
+.buttons button {
+	margin: 10px 10px 10px 0;
+}
