@@ -21,8 +21,8 @@ const Colors = ({colors, onClick}) => {
 		</div>
 }
 
-const Button = ({id, text, onClick}) => {
-	return <button id={id} className="btn btn-primary" onClick={onClick}>{text}</button>
+const Button = ({id, text, onClick, disabled}) => {
+	return <button id={id} className="btn btn-primary" onClick={onClick} disabled={disabled}>{text}</button>
 }
 
 class App extends React.Component {
@@ -36,7 +36,9 @@ class App extends React.Component {
 				season: 1,
 				episode: 1,
 				sid: 253
-			}
+			},
+			subText: '',
+			buttonsEnabled: true
 		};
 	}
 
@@ -48,6 +50,7 @@ class App extends React.Component {
 		this.socket = new WebSocketManager();
 
 		this.socket.addHandler('load', (data) => {
+			this.setState({subText: data.text});
 			this.video.setState({subText: data.text});
 			this.video.setClip(data.text, data.file);
 			this.setState({
@@ -56,6 +59,8 @@ class App extends React.Component {
 			});
 
 			this.setState({load: data});
+
+			this.enableButtons();
 		});
 
 		this.socket.addHandler('saved', (data) => {
@@ -82,6 +87,7 @@ class App extends React.Component {
 	}
 
 	handleTextChange(e) {
+		this.setState({subText: e.target.value});
 		this.video.setText(e.target.value);
 	}
 
@@ -89,12 +95,24 @@ class App extends React.Component {
 		this.socket.send('search', keywords);
 	}
 
+	disableButtons() {
+		this.setState({buttonsEnabled: false});
+	}
+
+	enableButtons() {
+		this.setState({buttonsEnabled: true});
+	}
+
 	loadClip(season, episode, sid) {
 		this.socket.send('load',  {season, episode, sid});
+
+		this.disableButtons();
 	}
 
 	loadRandom(e) {
 		this.socket.send('random');
+
+		this.disableButtons();
 	}
 
 	save() {
@@ -120,23 +138,31 @@ class App extends React.Component {
 			</div>
 			<div className="row">
 				<div className="col-md-3">
-				{(() => {
-					if(this.state.videoVisible) {
-						return <div id="edit">
-							<div className='buttons'>
-								<Button id="random" text="Random" onClick={this.loadRandom.bind(this)} />
-								<Button id="save" text="Download" onClick={this.save.bind(this)} />
-							</div>
-						
-							<Colors colors={this.props.colors} onClick={color => this.video.setTextColor(color)} />
-							<input type="text" ref={e => this.editText = e} onChange={this.handleTextChange.bind(this)} />
+				{ this.state.videoVisible ?
+					<div id="edit">
+						<div className='buttons'>
+							<Button disabled={!this.state.buttonsEnabled} id="random" text="Random" onClick={this.loadRandom.bind(this)} />
+							<Button disabled={!this.state.buttonsEnabled} id="save" text="Download" onClick={this.save.bind(this)} />
 						</div>
-					}
-					})()
+					
+						<Colors
+							colors={this.props.colors}
+							onClick={color => this.video.setTextColor(color)}
+						/>
+						<textarea
+							value={this.state.subText}
+							ref={e => this.editText = e}
+							onChange={this.handleTextChange.bind(this)}
+						/>
+					</div> : null
 				}
 				</div>
 				<div className="col-md-9">
-					<Video ref={e => this.video = e} defaultWidth={this.props.defaultWidth} defaultHeight={this.props.defaultHeight} />
+					<Video
+						ref={e => this.video = e}
+						defaultWidth={this.props.defaultWidth}
+						defaultHeight={this.props.defaultHeight}
+					/>
 				</div>
 			</div>
 			<div className="row">
