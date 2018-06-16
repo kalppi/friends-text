@@ -4,6 +4,10 @@ const util = require('util');
 const path = require('path');
 
 class Cache {
+	constructor(dir) {
+		this.dir = dir;
+	}
+
 	_generateCacheKey(data) {
 		const hash = crypto.createHash('md5');
 		const keys = Object.keys(data).sort();
@@ -20,7 +24,7 @@ class Cache {
 	}
 
 	fullFilename(key, ext) {
-		return util.format("%s/tmp/%s", __dirname, this.filename(key, ext));
+		return path.join(this.dir, '/' + this.filename(key, ext));
 	}
 
 	get(data, ext) {

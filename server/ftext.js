@@ -1,7 +1,7 @@
 const util = require('util'),
 	fs = require('fs'),
 	path = require('path'),
-	renderText = require('../shared/rendertext'),
+	renderText = require('../src/shared/rendertext'),
 	Cache = require('./cache'),
 	ffmpeg = require('./ffmpeg'),
 	Canvas = require('canvas'),
@@ -19,7 +19,7 @@ class FText {
 		this.subData = {};
 		this.options = options;
 
-		this.cache = new Cache();
+		this.cache = new Cache(options.cacheDir);
 		this.subParser = new SubtitleParser({
 			dir: options.dir + '/subs',
 			match: options.subfile_match,

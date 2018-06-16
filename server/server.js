@@ -23,13 +23,14 @@ const app = express(),
 
 const tmpDir = path.join(__dirname, '../tmp');
 const sharedDir = path.join(__dirname, '../shared');
+const buildDir = path.join(__dirname, '../build');
 
 app.use(express.static(tmpDir));
 app.use(express.static(sharedDir));
-//app.use(express.static('public'));
+app.use(express.static(buildDir));
 
 app.get('/', (req, res) => {
-	res.sendFile(__dirname + '/index.html');
+	res.sendFile(path.join(buildDir, '/index.html'));
 });
 
 app.get('/video/:id', (req, res) => {
@@ -65,6 +66,7 @@ app.get('/gif/:id', (req, res) => {
 
 const ftext = new FText({
 	dir: process.argv[2],
+	cacheDir: tmpDir,
 	subfile_match: 's([0-9]+).e([0-9]+)',
 	subfile_match_groups: {season: 1, episode: 2}
 });
