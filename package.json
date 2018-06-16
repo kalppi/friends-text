@@ -17,8 +17,10 @@
     "js-easy-text-search": "github:kalppi/js-easy-text-search",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-scripts": "^1.1.0",
     "websocket": "^1.0.24"
   },
-  "proxy": "http://localhost:8080"
+  "devDependencies": {
+  	"react-scripts": "^1.1.0"
+  },
+  "proxy": "http://localhost:8082"
 }

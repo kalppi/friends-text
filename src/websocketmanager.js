@@ -1,6 +1,6 @@
 class WebSocketManager {
 	constructor() {
-		this.socket = new WebSocket('ws://' + window.location.hostname + ':8080', 'ftext');
+		this.socket = new WebSocket('ws://' + window.location.hostname + ':' + window.location.port, 'ftext');
 
 		this.socket.onerror = function() {
 			console.log('Connection Error');

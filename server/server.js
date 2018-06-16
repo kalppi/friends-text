@@ -19,7 +19,7 @@ const FText = require('./ftext'),
 
 const app = express(),
 	server = http.createServer(app),
-	port = 8080;
+	port = process.env.PORT || 8080;
 
 const tmpDir = path.join(__dirname, '../tmp');
 const sharedDir = path.join(__dirname, '../shared');
