@@ -133,6 +133,7 @@ class App extends React.Component {
 		return <div className="container">
 			<div className="row">
 				<div className="col-md-12">
+					<h5>Search</h5>
 					<Search ref={e => this.search = e} onSelect={this.onSearchSelect.bind(this)} search={this.doSearch.bind(this)} />
 				</div>
 			</div>
