@@ -1,11 +1,12 @@
 {
-  "name": "ftext",
+  "name": "friends-text",
   "version": "0.0.1",
   "description": "",
   "main": "server/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "node server/server.js",
+    "server-prod": "NODE_ENV=production node server/server.js",
+    "server-dev": "NODE_ENV=development PORT=8080 node server/server.js",
     "start": "react-scripts start",
     "build": "react-scripts build"
   },
@@ -22,5 +23,5 @@
   "devDependencies": {
   	"react-scripts": "^1.1.0"
   },
-  "proxy": "http://localhost:8082"
+  "proxy": "http://localhost:8080"
 }

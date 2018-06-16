@@ -1,7 +1,6 @@
 import React from 'react'
 import './css/search.css'
 
-let bound = false;
 let searchTimer = null;
 
 const parseResults = results => {

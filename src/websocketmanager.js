@@ -1,6 +1,13 @@
+
+let port = window.location.port;
+
+if(process.env.NODE_ENV === 'development') {
+	port = 8080;
+}
+
 class WebSocketManager {
 	constructor() {
-		this.socket = new WebSocket('ws://' + window.location.hostname + ':' + window.location.port, 'ftext');
+		this.socket = new WebSocket('ws://' + window.location.hostname + ':' + port, 'ftext');
 
 		this.socket.onerror = function() {
 			console.log('Connection Error');

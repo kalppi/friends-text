@@ -22,7 +22,7 @@ const Button = ({id, text, onClick}) => {
 class App extends React.Component {
 	constructor(props) {
 		super(props);
-
+		
 		this.state = {
 			videoVisible: false,
 			loaded: {}
