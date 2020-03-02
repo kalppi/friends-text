@@ -4,20 +4,26 @@ class Client extends EventEmitter {
 	constructor(request) {
 		super();
 
-		this.con = request.accept('ftext', request.origin);
+		try {
+			this.con = request.accept('ftext', request.origin);
 
-		this.con.on('message', (msg) => {
-			const data = JSON.parse(msg.utf8Data);
+			this.con.on('message', msg => {
+				const data = JSON.parse(msg.utf8Data);
 
-			this.emit(data.cmd, this, data.data);
-		});
+				this.emit(data.cmd, this, data.data);
+			});
+		} catch (e) {
+			console.log(e);
+		}
 	}
 
 	send(cmd, data) {
-		this.con.send(JSON.stringify({
-			cmd: cmd,
-			data: data
-		}));
+		this.con.send(
+			JSON.stringify({
+				cmd: cmd,
+				data: data
+			})
+		);
 	}
 }
 

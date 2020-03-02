@@ -1,0 +1,20 @@
+{
+  "name": "friends-text-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "canvas": "^2.6.1",
+    "express": "^4.17.1",
+    "fsevents": "^1.1.2",
+    "js-easy-text-search": "github:kalppi/js-easy-text-search",
+    "websocket": "^1.0.31"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Jarno Luukkonen",
+  "license": "ISC"
+}

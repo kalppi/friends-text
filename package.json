@@ -1,27 +1,17 @@
 {
   "name": "friends-text",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "",
-  "main": "server/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "server-prod": "NODE_ENV=production node server/server.js",
-    "server-dev": "NODE_ENV=development PORT=8080 node server/server.js",
-    "start": "react-scripts start",
-    "build": "react-scripts build"
+    "server-dev": "cd server && npm start ../../friends-data",
+    "client": "cd webclient && npm start",
+    "dev": "concurrently \"npm run server-dev\" \"npm run client\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jarno Luukkonen",
   "license": "ISC",
-  "dependencies": {
-    "canvas": "^1.6.9",
-    "express": "^4.15.2",
-    "js-easy-text-search": "github:kalppi/js-easy-text-search",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "websocket": "^1.0.24"
-  },
+  "dependencies": {},
   "devDependencies": {
-  	"react-scripts": "^1.1.0"
-  },
-  "proxy": "http://localhost:8080"
+    "concurrently": "^5.1.0"
+  }
 }

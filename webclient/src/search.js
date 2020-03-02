@@ -1,19 +1,19 @@
-import React from 'react'
-import './css/search.css'
+import React from 'react';
+import './css/search.css';
 
 let searchTimer = null;
 
 const parseResults = results => {
 	const data = {
-        results: []
-    };
+		results: []
+	};
 
-    const grouped = {};
+	const grouped = {};
 
-	for(let r of results) {
+	for (let r of results) {
 		const key = r.season.toString() + 'x' + r.episode.toString();
 
-		if(!grouped[key]) {
+		if (!grouped[key]) {
 			grouped[key] = [];
 		}
 
@@ -28,14 +28,14 @@ const parseResults = results => {
 
 	const keys = Object.keys(grouped);
 
-	for(let k of keys) {
+	for (let k of keys) {
 		const group = {
 			id: k,
 			text: k,
 			children: []
 		};
 
-		for(let i in grouped[k]) {
+		for (let i in grouped[k]) {
 			const r = grouped[k][i];
 
 			group.children.push(r);
@@ -45,34 +45,33 @@ const parseResults = results => {
 	}
 
 	return data;
-}
+};
 
 class Search extends React.Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			searchResults: null
+			searchResults: null
 		};
 	}
 
 	shouldComponentUpdate() {
-		return false
+		return false;
 	}
 
 	query(query) {
-		if(query.term && query.term !== '') {
+		if (query.term && query.term !== '') {
 			clearTimeout(searchTimer);
 
 			searchTimer = setTimeout(async () => {
 				this.props.search(query.term);
 
 				await this.searchResultsReady();
-				
+
 				const results = parseResults(this.state.searchResults);
 
 				query.callback(results);
-
 			}, 300);
 		} else {
 			return false;
@@ -86,8 +85,8 @@ class Search extends React.Component {
 	}
 
 	setSearchResults(results) {
-		this.setState({searchResults: results}, () => {
-			if(this.searchResultsReadyResolve) {
+		this.setState({ searchResults: results }, () => {
+			if (this.searchResultsReadyResolve) {
 				this.searchResultsReadyResolve();
 				this.searchResultsReadyResolve = null;
 			}
@@ -95,17 +94,18 @@ class Search extends React.Component {
 	}
 
 	componentDidMount() {
+		/*
 		this.$select = window.$(this.select);
 
 		this.$select.select2({
 			query: this.query.bind(this)
 		});
 
-		this.$select.on('select2:select', this.props.onSelect);
+		this.$select.on('select2:select', this.props.onSelect);*/
 	}
 
 	render() {
-		return <select id="search" ref={e => this.select = e}></select>
+		return <select id="search" ref={e => (this.select = e)} />;
 	}
 }
 
