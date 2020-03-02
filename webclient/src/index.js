@@ -1,15 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './style.css';
+import './css/style.css';
 import WebSocketManager from './websocketmanager';
 import Video from './video';
 import Search from './search';
-
-let port = window.location.port;
-
-if (process.env.NODE_ENV === 'development') {
-	port = 8080;
-}
 
 const Colors = ({ colors, onClick }) => {
 	return (
@@ -43,21 +37,17 @@ const Button = ({ id, text, onClick, disabled }) => {
 };
 
 class App extends React.Component {
-	constructor(props) {
-		super(props);
-
-		this.state = {
-			videoVisible: false,
-			loaded: {},
-			load: {
-				season: 1,
-				episode: 1,
-				sid: 265
-			},
-			subText: '',
-			buttonsEnabled: true
-		};
-	}
+	state = {
+		videoVisible: false,
+		loaded: {},
+		load: {
+			season: 1,
+			episode: 1,
+			sid: 265
+		},
+		subText: '',
+		buttonsEnabled: true
+	};
 
 	componentDidMount() {
 		this.connect();
@@ -85,14 +75,10 @@ class App extends React.Component {
 		});
 
 		this.socket.addHandler('saved', data => {
-			document.location =
-				'http://' +
-				window.location.hostname +
-				':' +
-				port +
-				'/video/' +
-				data.file +
-				'/download';
+			const { hostname, port } = window.location;
+			document.location = `http://${hostname}:${port}/api/video/${
+				data.file
+			}/download`;
 		});
 
 		this.socket.addHandler('searchResult', data => {

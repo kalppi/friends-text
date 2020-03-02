@@ -1,6 +1,6 @@
-import React from 'react'
-import renderText from './shared/rendertext'
-import './css/video.css'
+import React from 'react';
+import renderText from './shared/rendertext';
+import './css/video.css';
 
 class Video extends React.Component {
 	constructor(props) {
@@ -11,7 +11,7 @@ class Video extends React.Component {
 			source: '',
 			textColor: null,
 			ready: false
-		}
+		};
 	}
 
 	componentDidMount() {
@@ -19,19 +19,20 @@ class Video extends React.Component {
 		this.video.loop = true;
 		this.video.muted = true;
 
-		this.video.addEventListener('error', function(e) {
+		this.video.addEventListener('error', function(e) {});
 
-		});
-		
 		this.video.addEventListener('canplay', () => {
-			this.setState({ready: true});
+			this.setState({ ready: true });
 			this.setCanvasSize();
 		});
 
-		this.video.addEventListener('loadedmetadata', function() {
-			this.canvas.width = this.video.videoWidth;
-			this.canvas.height = this.video.videoHeight;
-		}.bind(this));
+		this.video.addEventListener(
+			'loadedmetadata',
+			function() {
+				this.canvas.width = this.video.videoWidth;
+				this.canvas.height = this.video.videoHeight;
+			}.bind(this)
+		);
 
 		this.setCanvasSize();
 	}
@@ -39,7 +40,7 @@ class Video extends React.Component {
 	setCanvasSize() {
 		let vw, vh;
 
-		if(this.state.ready) {
+		if (this.state.ready) {
 			vw = this.video.videoWidth;
 			vh = this.video.videoHeight;
 		} else {
@@ -58,43 +59,55 @@ class Video extends React.Component {
 	}
 
 	setTextColor(color) {
-		this.setState({textColor: color}, () => {
+		this.setState({ textColor: color }, () => {
 			this.updateTextCanvas();
 		});
 	}
 
 	setText(text) {
-		this.setState({subText: text}, () => {
+		this.setState({ subText: text }, () => {
 			this.updateTextCanvas();
 		});
 	}
 
 	setClip(text, file) {
-		this.setState({
-			subText: text,
-			source: 'video/' + file
-		}, () => {
-			this.video.play();
-		});
+		this.setState(
+			{
+				subText: text,
+				source: 'api/clip/' + file
+			},
+			async () => {
+				try {
+					await this.video.play();
+				} catch (e) {
+					console.log(e);
+				}
+			}
+		);
 	}
 
-	updateTextCanvas() {
+	updateTextCanvas() {
 		renderText(this.canvas, this.state.subText, {
 			stroke: 'black',
 			fill: this.state.textColor,
-			font: "32px bold Open Sans Condensed",
+			font: '32px bold Open Sans Condensed',
 			textMargin: 20,
 			lineHeight: 35
 		});
 	}
 
 	render() {
-		return <div ref={e => this.outerContainer = e} id="video-container">
-				<div ref={e => this.container = e}>
-					<video ref={video => this.video = video} src={this.state.source} />
-					<canvas ref={e => this.canvas = e} />
+		return (
+			<div ref={e => (this.outerContainer = e)} id="video-container">
+				<div ref={e => (this.container = e)}>
+					<video
+						ref={video => (this.video = video)}
+						src={this.state.source}
+					/>
+					<canvas ref={e => (this.canvas = e)} />
 				</div>
 			</div>
+		);
 	}
 }
 

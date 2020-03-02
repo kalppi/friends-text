@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "server-dev": "cd server && npm start ../../friends-data",
+    "server-dev": "cd server && npm run start-dev ../../friends-data",
     "client": "cd webclient && npm start",
     "dev": "concurrently \"npm run server-dev\" \"npm run client\"",
     "test": "echo \"Error: no test specified\" && exit 1"

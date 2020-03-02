@@ -16,10 +16,11 @@ const pad = (n, len = 2) => {
 };
 
 class FText {
+	#loaded = false;
+
 	constructor(options) {
 		this.subData = {};
 		this.options = options;
-
 		this.cache = new Cache(options.cacheDir);
 		this.subParser = new SubtitleParser({
 			dir: options.dir + '/subs',
@@ -46,6 +47,8 @@ class FText {
 	}
 
 	getSub(season, episode, sid) {
+		if (!this.loaded) return;
+
 		const seasonObj = this.subtitles.get(season);
 		const episodeObj = seasonObj.get(episode);
 
@@ -60,6 +63,8 @@ class FText {
 	}
 
 	random() {
+		if (!this.loaded) return;
+
 		const season = this.subtitles.getRandomChild();
 		const episode = season.getRandomChild();
 		const s = episode.getRandomChild();
@@ -111,6 +116,8 @@ class FText {
 
 			this.subParser.load().then(subs => {
 				this.subtitles = subs;
+
+				this.loaded = true;
 
 				this._loadSearch().then(loaded => {
 					if (loaded) {
@@ -244,7 +251,7 @@ class FText {
 						'-i',
 						input,
 						'-vf',
-						'fps=10,scale=320:-1:flags=lanczos,palettegen=stats_mode=diff',
+						'fps=20,scale=500:-1:flags=lanczos,palettegen=stats_mode=diff',
 						output + '.palette.png',
 						'-y'
 					])
@@ -255,7 +262,7 @@ class FText {
 							'-i',
 							output + '.palette.png',
 							'-filter_complex',
-							'fps=10,scale=320:-1:flags=lanczos[x];[x][1:v]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle',
+							'fps=20,scale=500:-1:flags=lanczos[x];[x][1:v]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle',
 							output,
 							'-y'
 						]);
@@ -271,7 +278,7 @@ class FText {
 						input,
 						//'-filter_complex', 'palettegen[PAL],[0:v][PAL]paletteuse',
 						'-vf',
-						'fps=15,scale=320:-1',
+						'fps=20,scale=500:-1',
 						output,
 						'-y'
 					])

@@ -1,8 +1,8 @@
-let port = window.location.port;
+// let port = window.location.port;
 
-if (process.env.NODE_ENV === 'development') {
-	port = 8080;
-}
+// if (process.env.NODE_ENV === 'development') {
+// 	port = 8080;
+// }
 
 class WebSocketManager {
 	constructor() {
@@ -18,12 +18,10 @@ class WebSocketManager {
 	}
 
 	connect() {
-		console.log('WS CONNECT', window.location.hostname + ':' + port);
+		// console.log('WS CONNECT', window.location.hostname + ':' + port);
 
-		this.socket = new WebSocket(
-			'ws://' + window.location.hostname + ':' + port,
-			'ftext'
-		);
+		const { hostname, port } = window.location;
+		this.socket = new WebSocket(`ws://${hostname}:${port}/ws`, 'ftext');
 
 		this.socket.onerror = function() {
 			console.log('Connection Error');

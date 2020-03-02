@@ -8,12 +8,21 @@
     "express": "^4.17.1",
     "fsevents": "^1.1.2",
     "js-easy-text-search": "github:kalppi/js-easy-text-search",
+    "rxjs": "^6.5.4",
     "websocket": "^1.0.31"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.6",
+    "@babel/node": "^7.8.4",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.8.6",
+    "babel-plugin-undeclared-variables-check": "^6.22.0",
+    "nodemon": "^2.0.2"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start-dev": "nodemon --exec babel-node server.js"
   },
   "author": "Jarno Luukkonen",
   "license": "ISC"
