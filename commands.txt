@@ -3,3 +3,5 @@ ffmpeg -i Friends.s01.e01.1994.bdrip.1080p.ukr.eng.ac3.hurtom.tnu.tenax555-1.mkv
 ffmpeg -ss 00:09:30 -i out.mp4 -ss 00:00:30 -t 00:00:02.0 -c libx264 -an -preset veryfast -crf 22 clip.mp4
 
 ffmpeg -i clip.mp4 -ss 00:00:01.800 -vframes 1 out1.jpg
+
+ffmpeg -i d0a6dde91987bd432f2390403eda3ed0.mp4 -filter:v "select=not(mod(n\,5)),setpts=N/(FRAME_RATE*TB),scale=1:1" -f image2pipe -c:v ppm - | convert +append - -resize 100x50! out.png

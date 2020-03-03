@@ -11,7 +11,8 @@ import path from 'path';
 import express from 'express';
 import http from 'http';
 import { server as WebSocketServer } from 'websocket';
-import { Subject } from 'rxjs';
+import { Subject, Observable, interval } from 'rxjs';
+import { throttle } from 'rxjs/operators';
 
 import httpApi from './api/httpApi';
 import GeneralApi from './api/generalApi';
@@ -78,18 +79,30 @@ wsServer.on('request', function(request) {
 
 	const con = request.accept('ftext', request.origin);
 
-	con.on('message', msg => {
-		const { cmd, data } = JSON.parse(msg.utf8Data);
-
-		const eventBus = new Subject();
+	const o = Observable.create(eventBus => {
 		const api = new GeneralApi(eventBus, ftext);
 
-		eventBus.subscribe(message => {
-			con.send(JSON.stringify(message));
+		// sallitaan vain yksi komento / 1s
+		const incoming = Observable.create(incomingCommands => {
+			con.on('message', msg => {
+				incomingCommands.next(JSON.parse(msg.utf8Data));
+			});
+		}).pipe(throttle(val => interval(1000)));
+
+		const sub = incoming.subscribe(command => {
+			const { cmd, data } = command;
+
+			if (api[cmd]) {
+				api[cmd](data);
+			}
 		});
 
-		if (api[cmd]) {
-			api[cmd](data);
-		}
+		con.on('close', () => {
+			sub.unsubscribe();
+		});
+	});
+
+	o.subscribe(message => {
+		con.send(JSON.stringify(message));
 	});
 });

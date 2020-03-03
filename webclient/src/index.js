@@ -2,8 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './css/style.css';
 import WebSocketManager from './websocketmanager';
-import Video from './video';
-import Search from './search';
+import Video from './Video';
+import Search from './Search';
+import ColorMap from './ColorMap';
 
 const Colors = ({ colors, onClick }) => {
 	return (
@@ -46,7 +47,11 @@ class App extends React.Component {
 			sid: 265
 		},
 		subText: '',
-		buttonsEnabled: true
+		mapId: null,
+		buttonsEnabled: true,
+		video: null,
+		currentTime: 0,
+		searchResults: []
 	};
 
 	componentDidMount() {
@@ -60,18 +65,18 @@ class App extends React.Component {
 			this.setState({ subText: data.text });
 			this.video.setState({ subText: data.text });
 			this.video.setClip(data.text, data.file);
+
 			this.setState({
 				videoVisible: true,
 				loaded: {
 					season: data.season,
 					episode: data.episode,
 					sid: data.sid
-				}
+				},
+				mapId: data.map
 			});
 
 			this.setState({ load: data });
-
-			this.enableButtons();
 		});
 
 		this.socket.addHandler('saved', data => {
@@ -82,7 +87,7 @@ class App extends React.Component {
 		});
 
 		this.socket.addHandler('searchResult', data => {
-			this.search.setSearchResults(data);
+			this.setState({ searchResults: data });
 		});
 
 		this.socket.addHandler('onClose', () => {
@@ -100,36 +105,15 @@ class App extends React.Component {
 		);
 	}
 
-	handleTextChange(e) {
-		this.setState({ subText: e.target.value });
-		this.video.setText(e.target.value);
-	}
-
-	doSearch(keywords) {
-		this.socket.send('search', keywords);
-	}
-
-	disableButtons() {
-		this.setState({ buttonsEnabled: false });
-	}
-
-	enableButtons() {
-		this.setState({ buttonsEnabled: true });
-	}
-
 	loadClip(season, episode, sid) {
 		this.socket.send('load', { season, episode, sid });
-
-		this.disableButtons();
 	}
 
-	loadRandom(e) {
+	loadRandom = e => {
 		this.socket.send('random');
+	};
 
-		this.disableButtons();
-	}
-
-	save() {
+	save = () => {
 		this.socket.send('save', {
 			season: this.state.loaded.season,
 			episode: this.state.loaded.episode,
@@ -137,15 +121,20 @@ class App extends React.Component {
 			text: this.video.state.subText,
 			color: this.video.state.textColor
 		});
-	}
+	};
 
-	onSearchSelect(e) {
-		this.loadClip(
-			e.params.data.season,
-			e.params.data.episode,
-			e.params.data.sid
-		);
-	}
+	onSearchSelect = value => {
+		this.loadClip(value.season, value.episode, value.sid);
+	};
+
+	handleTextChange = e => {
+		this.setState({ subText: e.target.value });
+		this.video.setText(e.target.value);
+	};
+
+	doSearch = keywords => {
+		this.socket.send('search', keywords);
+	};
 
 	render() {
 		return (
@@ -154,9 +143,10 @@ class App extends React.Component {
 					<div className="col-md-12">
 						<h5>Search</h5>
 						<Search
-							ref={e => (this.search = e)}
-							onSelect={this.onSearchSelect.bind(this)}
-							search={this.doSearch.bind(this)}
+							// ref={e => (this.search = e)}
+							onSelect={this.onSearchSelect}
+							search={this.doSearch}
+							searchResults={this.state.searchResults}
 						/>
 					</div>
 				</div>
@@ -169,13 +159,13 @@ class App extends React.Component {
 										disabled={!this.state.buttonsEnabled}
 										id="random"
 										text="Random"
-										onClick={this.loadRandom.bind(this)}
+										onClick={this.loadRandom}
 									/>
 									<Button
 										disabled={!this.state.buttonsEnabled}
 										id="save"
 										text="Download"
-										onClick={this.save.bind(this)}
+										onClick={this.save}
 									/>
 								</div>
 
@@ -188,7 +178,7 @@ class App extends React.Component {
 								<textarea
 									value={this.state.subText}
 									ref={e => (this.editText = e)}
-									onChange={this.handleTextChange.bind(this)}
+									onChange={this.handleTextChange}
 								/>
 							</div>
 						) : null}
@@ -198,7 +188,15 @@ class App extends React.Component {
 							ref={e => (this.video = e)}
 							defaultWidth={this.props.defaultWidth}
 							defaultHeight={this.props.defaultHeight}
+							saveVideoObject={video => this.setState({ video })}
 						/>
+
+						{this.state.mapId ? (
+							<ColorMap
+								id={this.state.mapId}
+								video={this.state.video}
+							/>
+						) : null}
 					</div>
 				</div>
 				<div className="row">

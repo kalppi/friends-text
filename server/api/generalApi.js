@@ -4,6 +4,15 @@ export default class GeneralApi {
 		this.ftext = ftext;
 	}
 
+	download(data) {
+		const { id, format } = data;
+		const file = path.join(tmpDir, id + '.' + format);
+
+		fs.readFile(file, data => {
+			this.eventBus.next({ cmd: 'file', data: data.toString('base64') });
+		});
+	}
+
 	save(data) {
 		this.ftext.renderTextOnClip(data).then(id => {
 			this.eventBus.next({ cmd: 'saved', data: { file: id } });
@@ -13,19 +22,22 @@ export default class GeneralApi {
 	load(data) {
 		this.ftext.generateClip(data).then(
 			id => {
-				this.eventBus.next({
-					cmd: 'load',
-					data: {
-						file: id,
-						text: this.ftext.getSub(
-							data.season,
-							data.episode,
-							data.sid
-						).text,
-						season: data.season,
-						episode: data.episode,
-						sid: data.sid
-					}
+				this.ftext.generateColorMap(id).then(mapId => {
+					this.eventBus.next({
+						cmd: 'load',
+						data: {
+							file: id,
+							map: mapId,
+							text: this.ftext.getSub(
+								data.season,
+								data.episode,
+								data.sid
+							).text,
+							season: data.season,
+							episode: data.episode,
+							sid: data.sid
+						}
+					});
 				});
 			},
 			err => {

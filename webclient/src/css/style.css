@@ -18,7 +18,8 @@ body {
 	margin-bottom: 10px;
 }
 
-#video-container video, #video-container canvas {
+#video-container video,
+#video-container canvas {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -63,3 +64,24 @@ textarea {
 	margin-top: 10px;
 }
 
+#map {
+	margin-top: 20px;
+	/*position: relative;*/
+}
+
+#map img {
+	width: 100%;
+	height: 30px;
+}
+
+#map #pos {
+	height: 30px;
+	width: 2px;
+	background: black;
+	position: absolute;
+
+	will-change: transform;
+	transform: translateX(0);
+	transform: translateZ(0);
+	backface-visibility: hidden;
+}

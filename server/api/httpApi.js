@@ -11,6 +11,13 @@ export default tmpDir => {
 		res.sendFile(file);
 	});
 
+	route.get('/map/:id', (req, res) => {
+		const id = req.params.id;
+		const file = path.join(tmpDir, id + '.map.png');
+
+		res.sendFile(file);
+	});
+
 	route.get('/video/:id/download', (req, res) => {
 		const id = req.params.id;
 		const file = path.join(tmpDir, id + '.mp4');

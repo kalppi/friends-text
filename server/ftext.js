@@ -139,6 +139,7 @@ class FText {
 					.trim()
 					.replace(/\s+/g, ' ')
 					.replace(/ /g, '+') + '*';
+
 			const rtn = this.subSearch.search(terms, {
 				limit: 20,
 				sort: (a, b) => {
@@ -187,6 +188,11 @@ class FText {
 
 	renderTextOnClip(data) {
 		return new Promise((resolve, reject) => {
+			if (!this.loaded) {
+				reject();
+				return;
+			}
+
 			this.cache.get(data, videoFormat).then(
 				filename => {
 					resolve(path.basename(filename, '.' + videoFormat));
@@ -227,6 +233,8 @@ class FText {
 									'-pix_fmt',
 									'yuv420p',
 									'-an',
+									'-r',
+									'25',
 									filename,
 									'-y'
 								])
@@ -242,6 +250,11 @@ class FText {
 
 	makeGIF(id, hq = true) {
 		return new Promise((resolve, reject) => {
+			if (!this.loaded) {
+				reject();
+				return;
+			}
+
 			const input = this.cache.fullFilename(id, videoFormat);
 			const output = this.cache.fullFilename(id, 'gif');
 
@@ -289,6 +302,11 @@ class FText {
 
 	captureThumbnail(sub, file) {
 		return new Promise((resolve, reject) => {
+			if (!this.loaded) {
+				reject();
+				return;
+			}
+
 			const ts = this.textTimeToNumber(sub.time_start),
 				te = this.textTimeToNumber(sub.time_end);
 			const diff = te - ts;
@@ -322,6 +340,11 @@ class FText {
 
 	renderTextImage(data) {
 		return new Promise((resolve, reject) => {
+			if (!this.loaded) {
+				reject();
+				return;
+			}
+
 			this.cache.get(data, 'png').then(
 				filename => {
 					resolve(filename);
@@ -353,8 +376,57 @@ class FText {
 		});
 	}
 
+	generateColorMap(fileId) {
+		// ffmpeg -i d0a6dde91987bd432f2390403eda3ed0.mp4 -filter:v "select=not(mod(n\,5)),setpts=N/(FRAME_RATE*TB),scale=1:1" -f image2pipe -c:v ppm - | convert +append - -resize 100x50! out.png
+
+		return new Promise((resolve, reject) => {
+			if (!this.loaded) {
+				reject();
+				return;
+			}
+
+			this.cache.get({ fileId }, 'map.png').then(
+				filename => {
+					resolve(path.basename(filename, '.map.png'));
+				},
+				key => {
+					const inputFilename = this.cache.fullFilename(
+						fileId,
+						'mp4'
+					);
+					const filename = this.cache.fullFilename(key, 'map.png');
+
+					ffmpeg
+						.runAndPipe(
+							[
+								'-i',
+								inputFilename,
+								'-filter:v',
+								'select=not(mod(n\\,5)),setpts=N/(FRAME_RATE*TB),scale=1:1',
+								'-f',
+								'image2pipe',
+								'-c:v',
+								'ppm',
+								'-'
+							],
+							'convert',
+							['+append', '-', '-resize', '100x50!', filename]
+						)
+						.then(() => {
+							resolve(path.basename(filename, '.map.png'));
+						});
+				}
+			);
+		});
+	}
+
 	generateClip(data) {
 		return new Promise((resolve, reject) => {
+			if (!this.loaded) {
+				reject();
+				return;
+			}
+
 			this.cache.get(data, videoFormat).then(
 				filename => {
 					resolve(path.basename(filename, '.' + videoFormat));
@@ -399,6 +471,8 @@ class FText {
 							'veryfast',
 							'-crf',
 							'22',
+							'-r',
+							'25',
 							filename,
 							'-y'
 						])

@@ -35,6 +35,10 @@ class Video extends React.Component {
 		);
 
 		this.setCanvasSize();
+
+		if (this.props.saveVideoObject) {
+			this.props.saveVideoObject(this.video);
+		}
 	}
 
 	setCanvasSize() {
